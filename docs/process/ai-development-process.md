@@ -78,17 +78,35 @@ and discovering second would have meant rework.
 **The most valuable finding was unasked-for.** `advancedSearchData` returned the
 complete Gen Ed attribute vocabulary, which converted placeholder resolution —
 the MVP's hardest feature to source — from "unknown data source, possibly manual"
-into one filtered API call. It was found while answering an unrelated question.
+into a text-matching problem against a known vocabulary. It was found while
+answering an unrelated question. (The per-course side of the mapping initially
+came from the Programs API's `detail-ge_attrs` field rather than TigerCenter's
+`class-search`, because `class-search` appeared to return no data at the time —
+see Task 0.3/0.6 in the handoff brief. **Correction, 2026-08-26:** `class-search`
+was never actually blocked; every probe against it was missing a required
+`Accept: application/json` header, and it works fine once that's added. The
+Programs API mechanism is still a reasonable choice, just no longer the only
+one — see the updated Task 0.3 note in the handoff brief.)
 
 **Tooling limits were real and worth naming rather than working around.** Several
 questions (course-level endpoint, cookie-less POST) could not be answered from the
 chat environment. They were documented as explicit verification tasks rather than
 guessed at, and became Task 0 of the handoff.
 
-**A confirmed constraint reshaped a feature.** TigerCenter exposing exactly one
-term at a time turned "term availability" from a simple derived field into an
-accumulate-forward problem with a cold-start failure mode — caught in design
-rather than after shipping false warnings.
+**A constraint reshaped a feature — then turned out to be wrong, which is its own
+lesson.** TigerCenter exposing exactly one *active* term at a time was read as
+meaning it structurally cannot supply historical data, which turned "term
+availability" from a simple derived field into an accumulate-forward problem
+with a cold-start failure mode — caught in design rather than after shipping
+false warnings, which was the right instinct. **But the premise itself was
+wrong:** a 2026-08-26 re-test (after fixing the `class-search` header issue
+above) found real section data going back at least 3 years. The
+accumulate-forward design remains a safe default, but "TigerCenter can only
+ever show one term" should not have been treated as confirmed from a single
+endpoint's listing behavior — see the flag in `schema-decisions.md`. The
+process lesson holds either way: design defensively around an API constraint
+before it's needed, but keep re-verifying constraints that were inferred
+rather than directly tested.
 
 ---
 
@@ -107,3 +125,5 @@ rather than after shipping false warnings.
 | 2026-08-11 | Term availability split: observation log + asserted claim | One-term API exposure means a single observation would imply "everything is Fall-only" |
 | 2026-08-11 | Warn-only validation across prereqs and availability | Makes partial parse coverage useful; one false warning costs more trust than ten missing ones |
 | 2026-08-11 | Multi-program supported in shape, not in rules | Join table costs nothing now, avoids painful migration later |
+| 2026-08-22 | Gen Ed attribute source: Programs API `detail-ge_attrs`, not TigerCenter `class-search` | `class-search` returns `found: 0` for every query against the current term regardless of shape (Task 0.6); Programs API field confirmed populated for UGRD courses cookie-less and needs no working TigerCenter session |
+| 2026-08-26 | Superseding note, not a reversal: the 2026-08-22 rationale above no longer holds as stated | Task 0.6 resolved — the `found: 0` behavior was a missing `Accept: application/json` header, not a broken/empty `class-search`; it now returns real, cross-validated attribute data too. The Programs API choice can stand on its own merits (catalog-year-scoped, no TigerCenter dependency) but should not be justified by "`class-search` doesn't work" anymore. Left as an open design choice, not re-decided here — see `schema-decisions.md` |

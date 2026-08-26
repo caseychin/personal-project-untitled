@@ -146,6 +146,73 @@ depend on rules RIT publishes per program and are validation-engine concerns.
 
 ---
 
+## Flag — Task 0.3's workaround affects `catalog_course_attributes.term_code`
+
+`catalog_course_attributes` was designed assuming Gen Ed tagging comes from
+TigerCenter's `class-search` — hence `term_code not null references
+catalog_terms(code)` (see the table comment in `db/schema.sql`). Task 0.3
+(`docs/architecture/data-sources.md`) found `class-search` blocked (Task 0.6)
+and adopted the Programs API's `detail-ge_attrs` field instead, which is part
+of the **stable, catalog-year-scoped** course description, not a term-scoped
+observation — it has no natural `term_code` to stamp.
+
+**Update 2026-08-26: Task 0.6 is resolved** (it was a missing `Accept`
+header, not an outage — see the handoff brief) **and `class-search`'s own
+attribute fields are now confirmed working**, agreeing with the Programs
+API on `ARTH-135`. This doesn't resolve the flag below — it changes its
+shape: the choice is no longer "use the workaround because the intended
+source is broken," it's a genuine design choice between a term-scoped
+source (`class-search`, has a natural `term_code`) and a catalog-year-scoped
+one (Programs API, doesn't). The nullable-`term_code`-or-split-tables
+question below still needs an answer either way.
+
+**Not resolved here — flagging per CLAUDE.md rather than picking silently.**
+Task 2 (Programs API adapter) will need one of:
+- a nullable `term_code` for Programs-API-sourced rows, distinguished by
+  `source`, or
+- separating catalog-year-scoped attributes from term-observed ones into
+  different tables/columns.
+
+Whichever is chosen belongs in a numbered migration, not a hand-edit of
+`db/schema.sql`.
+
+---
+
+## Flag — the "TigerCenter is one-term-only" premise behind `catalog_course_term_offerings` is overturned, design choice needed
+
+`catalog_course_term_offerings` accumulates observations per term rather than
+backfilling, on the premise that TigerCenter structurally cannot supply
+historical or future-term data — inferred from `currentTerms` listing only
+one active term (see `docs/architecture/data-sources.md`, Terms section).
+
+**Update 2026-08-26: this premise is overturned, not just uncertain.** Task
+0.6's `found: 0` mystery was a missing `Accept: application/json` header
+(see the handoff brief), not a real limitation. With that fixed,
+`class-search` returns real, complete section data for historical terms:
+`2251` (Fall 2025, ~1 year back) and `2231` (Fall 2023, ~3 years back) both
+returned full section records — instructors, meetings, seat counts — no
+different in shape from the current term. Retention depth beyond 3 years is
+untested, but "at least 3 years of historical section data is available"
+is a confirmed fact now, not a hypothesis.
+
+**Not resolved here — flagging per CLAUDE.md rather than picking silently.**
+This changes what's possible, not what's required: the accumulate-forward
+design still works and stays a safe default. But it may no longer be the
+best choice — options worth weighing when Task 3 is actually built:
+- Backfill `catalog_course_term_offerings` for the last N terms on first
+  ingestion, removing the cold-start problem Task 5's confidence model
+  (`observed`, ~0.2, "grows per term") was designed around.
+- Keep accumulate-forward-only anyway, if backfilling adds complexity that
+  isn't worth it for a feature (`observed` availability) that already has a
+  higher-confidence primary source (`catalog_text`, ~0.9, from the Programs
+  API's `detail-typically_offered`).
+
+Whichever is chosen — or if neither, and the current design is kept as-is
+on purpose — belongs in a numbered migration or an explicit decision-log
+entry, not a silent no-op.
+
+---
+
 ## Deferred by design
 
 Commented in `db/schema.sql` rather than built: sharing/advisor view, cached

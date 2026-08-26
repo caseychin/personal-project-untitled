@@ -246,9 +246,10 @@ create index on catalog_course_term_offerings (course_id, season);
 -- layer lets weak evidence be recorded WITHOUT being acted on.
 --
 -- SEEDING, in priority order:
---   1. catalog_text   — RIT course catalog entries often carry an explicit
---                       "typically offered" note. Best source; requires the
---                       course-level Programs API endpoint (still untested).
+--   1. catalog_text   — RIT course catalog entries carry an explicit
+--                       "Typically Offered: Fall, Spring" note. Best source;
+--                       confirmed via the course-level Programs API endpoint
+--                       (proxy-bubble.php, see data-sources.md).
 --   2. plan_of_study  — a program template placing CSCI-331 in Year 3 Fall is
 --                       weak evidence it is offered in Fall. Free: already
 --                       ingested in catalog_requirement_slots. Low confidence.
