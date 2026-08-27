@@ -21,6 +21,14 @@ it is out of scope — say so rather than building it.
 ## Stack
 
 - **Database / Auth:** Supabase (Postgres 15+, email+password auth, RLS enforced)
+- **Frontend:** Next.js (App Router) + TypeScript + Tailwind CSS, `@supabase/ssr`
+  for auth. Chosen in Task 1 — see PR #2 for the full rationale. Route handlers
+  live in `src/app/`; Supabase client helpers in `src/lib/supabase/`. Note:
+  Next.js 16 renamed the `middleware.ts` convention to `proxy.ts` — that's
+  `src/proxy.ts`, not a stray file. **Don't delete `AGENTS.md`:** `next dev`/
+  `next build` auto-write an agent-rules block into it, or into this file if
+  `AGENTS.md` doesn't exist — keeping `AGENTS.md` present is what stops Next's
+  tooling from editing this file.
 - **Repo:** this one
 - **Schema:** `db/schema.sql` is the source of truth
 - **Design:** produced in Claude Design, specs land in `docs/`
