@@ -351,6 +351,28 @@ if this ever moves beyond a personal tool to wider distribution, revisit).
 
 ## Task 1 — Project scaffold
 
+**Status as of 2026-08-27: RESOLVED.** [PR #2](https://github.com/caseychin/personal-project-untitled/pull/2)
+(branch `task-1-project-scaffold`, open against `main`, not yet merged).
+Next.js (App Router) + TypeScript + Tailwind, `@supabase/ssr` for auth —
+full rationale in the PR description. `db/schema.sql` applied as
+`supabase/migrations/0001_initial_schema.sql` to both `rit-flowchart-dev`
+and `rit-flowchart-prod`, `get_advisors` clean on both. The RLS cross-user
+test (`tests/rls-cross-user.test.ts`) passes — 4/4 assertions — and the full
+golden path (sign up → create a named flowchart → see it listed) was
+verified end-to-end in a real browser, not just via the API-level test.
+
+Two things worth knowing before touching this repo's Next.js tooling again:
+- Next.js 16 renamed the `middleware.ts` file convention to `proxy.ts` —
+  that's `src/proxy.ts`.
+- `next dev`/`next build` auto-write an agent-rules block into `AGENTS.md`,
+  or into `CLAUDE.md` if `AGENTS.md` doesn't exist. `AGENTS.md` now exists
+  specifically so that doesn't happen to `CLAUDE.md` — don't delete it.
+
+Also: `rit-flowchart-dev`'s Auth setting "Confirm email" was turned off
+(dev only, prod untouched) so the RLS test's `signUp()` calls return a
+session immediately. Not reversed — needed again if the test is ever rerun
+or extended.
+
 - Initialize the app (framework choice is yours; justify briefly in a PR description)
 - Create the Supabase project; separate **dev** and **prod** instances from the start
 - Apply `db/schema.sql` as migration `0001_initial_schema.sql`

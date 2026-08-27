@@ -1,4 +1,30 @@
-# Documentation
+# RIT Course Flowchart Planner
+
+## Getting started
+
+```bash
+npm install
+cp .env.example .env   # fill in NEXT_PUBLIC_SUPABASE_URL / _PUBLISHABLE_KEY
+                        # for rit-flowchart-dev — via the Supabase dashboard
+                        # or `get_project_url` / `get_publishable_keys` (MCP)
+npm run dev             # http://localhost:3000
+```
+
+To run the RLS cross-user isolation test (`tests/rls-cross-user.test.ts`),
+"Confirm email" must be off in `rit-flowchart-dev`'s Auth settings (Dashboard
+→ Authentication → Sign In / Providers → Email) — already set as of Task 1.
+Then:
+
+```bash
+npm run test:rls
+```
+
+Schema changes are numbered migrations in `supabase/migrations/`, applied to
+both `rit-flowchart-dev` and `rit-flowchart-prod` via the Supabase MCP
+`apply_migration` tool — `db/schema.sql` stays the consolidated,
+human-readable definition and is never hand-edited to reflect a DB change.
+
+## Documentation
 
 | Document | Purpose |
 |---|---|
