@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:rls": "vitest run tests/rls-cross-user.test.ts"
+    "test:rls": "vitest run tests/rls-cross-user.test.ts",
+    "ingest:programs": "tsx scripts/ingest-programs.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.5",
@@ -21,10 +22,12 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "cheerio": "^1.2.0",
     "dotenv": "^17.4.2",
     "eslint": "^9",
     "eslint-config-next": "16.3.3",
     "tailwindcss": "^4",
+    "tsx": "^4.23.12",
     "typescript": "^5",
     "vitest": "^3.2.7"
   }
