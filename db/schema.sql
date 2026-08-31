@@ -156,16 +156,33 @@ create table catalog_attributes (
   unique (group_code, value_code)
 );
 
--- Term-stamped: attribute tagging comes from a single-term snapshot, so record
--- which term asserted it. Lets you detect when a course loses/gains a tag.
+-- Two scopes of Gen Ed tagging feed this table: TigerCenter's class-search
+-- (term-scoped — record which term asserted it, so you can detect a course
+-- losing/gaining a tag) and the Programs API's detail-ge_attrs (catalog-year-
+-- scoped — no natural term). term_code is nullable and source disambiguates;
+-- the scope_check constraint and the two partial-unique indexes below keep
+-- each scope internally consistent. See schema-decisions.md's term_code flag
+-- (added migration 0002, after v1 shipped with term_code NOT NULL).
 create table catalog_course_attributes (
+  id           uuid primary key default gen_random_uuid(),
   course_id    uuid not null references catalog_courses(id) on delete cascade,
   attribute_id uuid not null references catalog_attributes(id) on delete cascade,
-  term_code    text not null references catalog_terms(code),
-  primary key (course_id, attribute_id, term_code)
+  term_code    text references catalog_terms(code),
+  source       ingest_source not null,
+
+  constraint catalog_course_attributes_scope_check check (
+    (source = 'tigercenter' and term_code is not null) or
+    (source = 'programs_api' and term_code is null)
+  )
 );
 
 create index on catalog_course_attributes (attribute_id, term_code);
+create unique index catalog_course_attributes_term_scoped_uniq
+  on catalog_course_attributes (course_id, attribute_id, term_code)
+  where source = 'tigercenter';
+create unique index catalog_course_attributes_year_scoped_uniq
+  on catalog_course_attributes (course_id, attribute_id)
+  where source = 'programs_api';
 
 -- ---------------------------------------------------------------------
 -- PREREQUISITES — derived structure alongside the raw text

@@ -9,6 +9,7 @@ const DEFAULT_USER_AGENT =
 
 export type RateLimitedFetcher = {
   get(url: string, init?: RequestInit): Promise<{ status: number; body: string }>;
+  post(url: string, body: unknown, init?: RequestInit): Promise<{ status: number; body: string }>;
 };
 
 export function createRateLimitedFetcher(
@@ -34,6 +35,24 @@ export function createRateLimitedFetcher(
           "User-Agent": DEFAULT_USER_AGENT,
           ...init?.headers,
         },
+      });
+      const body = await response.text();
+      return { status: response.status, body };
+    },
+
+    // Shares the same waitForSlot() limiter as get() — one shared delay
+    // budget across both verbs, not a second independent rate limiter.
+    async post(url, jsonBody, init) {
+      await waitForSlot();
+      const response = await fetch(url, {
+        ...init,
+        method: "POST",
+        headers: {
+          "User-Agent": DEFAULT_USER_AGENT,
+          "Content-Type": "application/json;charset=UTF-8",
+          ...init?.headers,
+        },
+        body: JSON.stringify(jsonBody),
       });
       const body = await response.text();
       return { status: response.status, body };
