@@ -34,6 +34,7 @@ yarn-error.log*
 # never appear in any of these, checked in or not (app code never uses it).
 .env*
 !.env.example
+!.env.ingest.example
 
 # vercel
 .vercel

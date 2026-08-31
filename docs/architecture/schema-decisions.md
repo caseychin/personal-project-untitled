@@ -213,6 +213,59 @@ entry, not a silent no-op.
 
 ---
 
+## Flag — immersions are ingested as entities only; internal structure deferred
+
+Task 2 (Programs API adapter) ingests all 77 immersions as lightweight
+`catalog_programs` rows (`type = 'immersion'`, name/slug/catalog_year/
+total_credits) so a degree program's generic "Immersion 1/2/3" placeholder
+slots can reference them by name. It does **not** parse each immersion's
+internal required/elective course list.
+
+**Why:** an immersion's curriculum response is a select-N-of-M course list
+(`<table class="sc_courselist">` — Prerequisites / Required Courses /
+Electives, confirmed via a live fetch of `physics-immersion` during
+implementation), not a year/term Plan of Study Grid
+(`<table class="sc_plangrid">`). `catalog_requirement_slots.year_number` is
+`NOT NULL`, so this structure doesn't fit that table without a schema
+change — and nothing in Task 2's acceptance bar (CS BS reconstruction)
+requires resolving a specific immersion's internal course list.
+
+**Not resolved here — flagging per CLAUDE.md rather than picking silently.**
+Whoever builds "resolve Immersion 1 into a specific immersion's courses"
+will need one of:
+- a nullable `year_number` on `catalog_requirement_slots` (`null` = "no year
+  semantics", mirroring how `season = null` already means "anytime that
+  year"), or
+- a separate table for select-N-of-M course lists, parallel to
+  `catalog_requirement_slots` but without year/term columns.
+
+---
+
+## Flag — no confirmed example of inline degree-option clusters
+(`catalog_requirement_groups`) in the Programs API
+
+`catalog_requirement_groups` (Decision 8 / the schema's "select N of the
+following" mechanism) has no code populating it yet — not because it's
+unimplemented, but because Task 2 could not find a real example of the
+shape it's meant to represent. Checked during implementation: CS BS,
+`software-engineering-bs`, `mechanical-engineering-bs`,
+`electrical-engineering-bs`, `information-technology-bs` — all plain
+single-track `sc_plangrid` curricula, no inline "select N of the following"
+markup. RIT's `/study/{slug}-option` marketing-page slugs (e.g.
+`3d-digital-design-bfa-3d-visualization-option`) turned out **not** to be
+independent Programs API curriculum documents — that endpoint 404s for
+them — so "options are separate sibling program pages" isn't confirmed
+either; how RIT actually represents degree options through this API is
+still an open question.
+
+**Not resolved here.** `write-catalog.ts`'s group-writing code path exists
+and is exercised by nothing yet — a real example needs to surface (in a
+program beyond the small set checked above, or in a graduate program, or
+via a still-undiscovered response shape) before this can be tested against
+anything other than invented structure.
+
+---
+
 ## Deferred by design
 
 Commented in `db/schema.sql` rather than built: sharing/advisor view, cached
