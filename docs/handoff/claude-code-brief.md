@@ -403,6 +403,61 @@ Build behind a source-agnostic interface (`docs/architecture/data-sources.md`).
 same courses, same years, same terms, same co-op placement, correct total credits.
 Write this as a test fixture.
 
+**Status as of 2026-08-31: RESOLVED.** [PR #3](https://github.com/caseychin/personal-project-untitled/pull/3)
+(branch `task-2-programs-api-ingestion`, merged). Built `src/ingest/` — a
+rate-limited serial HTTP layer, raw-payload persistence to `ingest_documents`
+(content-hash deduped, before any parsing), a Plan-of-Study-Grid parser, and
+a writer that upserts `catalog_programs`/`catalog_requirement_slots` while
+never overwriting an existing `catalog_courses` row (so Task 3's TigerCenter
+enrichment is never clobbered by a re-run). Orchestrated by
+`scripts/ingest-programs.ts` (`npm run ingest:programs`), config in a new
+git-ignored `.env.ingest` — separate from `.env`, same pattern app code
+already uses to keep the service-role key out of anything client-facing.
+
+CS BS acceptance test passes: 43 slots, 126 total credits, all three co-op
+blocks correctly placed, verified against a hand-derived expected structure
+built from a live-fetched fixture (not guessed) and cross-checked against
+`CSUndergradFlowChart.pdf` for overall shape only — the PDF turned out to be
+a stale 2023-24 snapshot; the live 2026-27 curriculum has real, documented
+differences (honors course alternatives, an updated CS Elective structure,
+CSCI-472 now required outright rather than a 471-or-472 choice).
+
+Live dev run: 3 degree programs (CS BS, Software Engineering BS, Mechanical
+Engineering BS — 138 slots total) + all 77 immersions as lightweight
+entities. `get_advisors` clean.
+
+Two things deliberately deferred rather than guessed at — both flagged in
+`docs/architecture/schema-decisions.md`:
+- Immersions' internal required/elective course-list structure (a `select N
+  of M` shape that doesn't fit `catalog_requirement_slots.year_number NOT
+  NULL` without a schema change) — only the lightweight entity (name/credits)
+  is ingested.
+- `catalog_requirement_groups` (inline degree-option clusters) — no example
+  of the shape it's meant to represent was found in 5 programs checked; the
+  write path exists but is untested against real data.
+
+Also found and fixed live: the `/study/` listing slug and the canonical
+`/programs/` curriculum-document slug diverge for most immersions — see
+`data-sources.md`'s "Slug divergence" note under Immersions.
+
+**Worth knowing before starting Task 3:**
+- `src/ingest/http.ts` (rate-limited serial fetcher), `documents.ts`
+  (raw-payload persistence + content-hash dedupe), `runs.ts` (`ingest_runs`
+  bookkeeping), and `service-client.ts` (service-role client factory reading
+  `.env.ingest`) are all source-agnostic — reuse them rather than
+  reimplementing for the TigerCenter adapter. Only `sources/programs-api/`
+  is Programs-API-specific.
+- `.env.ingest` (git-ignored) already exists locally with
+  `SUPABASE_URL`/`SUPABASE_SERVICE_ROLE_KEY` for the dev project — no new
+  secret plumbing needed, just add TigerCenter-specific env vars there if
+  any turn out to be necessary (none expected — Task 0.2 confirmed
+  `class-search` needs no cookies/session).
+- Task 3's `catalog_course_attributes` write needs the
+  `term_code` nullability question resolved first (flagged in
+  `schema-decisions.md`, not resolved by Task 2) — don't guess at it
+  silently; it's the one pre-existing flag Task 3 actually has to settle
+  before writing rows, not just note.
+
 ---
 
 ## Task 3 — Ingestion: TigerCenter adapter

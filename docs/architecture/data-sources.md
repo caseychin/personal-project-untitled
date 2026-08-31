@@ -49,6 +49,39 @@ Confirmed working for an arbitrary slug (`computer-science-bs`) as well as the
 originally-sampled one — the earlier "untestable for other slugs" caveat was a
 caching artifact in the exploratory tool, not a real limitation.
 
+**Catalog year (Task 2, 2026-08-28).** The curriculum endpoint above does
+**not** carry `catalog_year` anywhere in its response. It lives instead as a
+static, server-rendered heading on the program's marketing page:
+
+```
+GET https://www.rit.edu/study/{slug}
+→ <h2 class="row--title mb-4">Curriculum for 2026-2027<span class="sr-only">...</span></h2>
+```
+
+Confirmed identical (`2026-2027`) across a degree program
+(`computer-science-bs`), an immersion (`physics-immersion`), and a second
+degree program (`software-engineering-bs`) — this is a single site-wide
+value for the live catalog edition, not something that varies per program.
+Fetch it once per ingestion run, not once per program. Note this is a
+narrower claim than the earlier ruling-out of `/study/{slug}` pages
+(marketing-page *course-list content* is JS-rendered and empty in static
+HTML, per the note below) — this specific heading is server-rendered and
+present.
+
+**Program-slug enumeration (Task 2, 2026-08-28).**
+
+```
+GET https://www.rit.edu/study/undergraduate
+```
+
+A static, directly-scrapable listing page — 166 real `/study/{slug}` links
+extracted directly from raw HTML, no JS execution needed (found via the same
+technique that found the immersions listing in Task 0.5: `/study/undergraduate`
+is linked from that listing page's own nav). Confirmed to include
+`computer-science-bs`. Not yet checked: whether `/study/graduate` (also
+linked from the immersions listing's nav) follows the same pattern for
+graduate programs — untested, out of scope for Task 2's undergraduate focus.
+
 **Confirmed working — course-level detail:**
 
 ```
@@ -162,10 +195,45 @@ Sample (`physics-immersion`, 200 OK):
 
 The response shape differs from a degree program's: immersions return
 `sc_courselist` select-N-of-M tables (Prerequisites / Required Courses /
-Electives), not a year/term Plan of Study Grid. **Only sampled one immersion
-(`physics-immersion`)** — not yet confirmed all 77 share this exact shape;
-worth sampling 2-3 more (e.g. an interdisciplinary or language one) before
-Task 2 builds a parser against it.
+Electives), not a year/term Plan of Study Grid.
+
+**Update (Task 2, 2026-08-29): all 77 confirmed reachable, but the shape
+question is only partly closed.** A live run fetched all 77 immersions'
+curriculum documents; every one returned a parseable `<h3>` name and (where
+present) a `tr.listsum` "Total Hours" row, so the *lightweight* fields Task 2
+actually needs are confirmed uniform across all 77. The deeper question —
+whether every immersion's `sc_courselist` internal structure (Prerequisites /
+Required / Electives tables) matches `physics-immersion`'s exact shape — is
+**still only sampled on one**, since Task 2 deliberately doesn't parse that
+structure (see the flag in `schema-decisions.md`). Re-open this if a future
+task needs to parse immersion internals.
+
+**Slug divergence (Task 2, 2026-08-29) — the `/study/` listing slug and the
+canonical `/programs/` curriculum-document slug are not always the same
+string.** E.g. the immersions-and-minors listing gives
+`advertising-and-public-relations-immersion`, but the real curriculum
+document is at `advertising-public-relations-immersion` — connector words
+("and", "in", etc.) get dropped inconsistently between the two URL
+namespaces, discovered only because a full 77-immersion run surfaced it
+(`physics-immersion`, Task 0.5's original sample, happened to match by
+coincidence — a single sample wasn't enough to catch this). Confirmed common,
+not rare: 3 of the first 4 immersions spot-checked directly mismatched.
+
+**Resolution:** each immersion's own `/study/{listingSlug}` marketing page
+reliably embeds its real slug in an inline script call:
+
+```js
+loadCourseleafData('/programs-api/courseleaf/proxy-api.php?url=/programs/{realSlug}/index.xml&section=...')
+```
+
+Fetch the marketing page first, extract `{realSlug}` from that call, then
+fetch the curriculum document with the corrected slug. Doubles the request
+count for immersions (marketing + curriculum per immersion) but is reliable
+— all 77 resolved correctly this way. **Not yet checked:** whether the same
+divergence affects degree-program slugs (all three tested in Task 2 —
+`computer-science-bs`, `software-engineering-bs`, `mechanical-engineering-bs`
+— happened to match directly, but that's 3 of 166 listed undergraduate
+programs).
 
 **Enumeration:** a full, static-HTML (non-JS-rendered) index exists at
 `https://www.rit.edu/study/immersions-and-minors` — 77 `-immersion` links
@@ -184,11 +252,11 @@ catalog, not prescribed per-program. This is architecturally different from
 Gen Ed Perspectives, where the curriculum links to one specific perspective's
 course list.
 
-**Practical implication for Task 2:** ingest immersions as their own
-`catalog_programs`-like entities (or a parallel table), independently of
-degree-program curriculum parsing, then reference them generically from
-Immersion placeholder slots — not parsed out of any single degree program's
-curriculum response.
+**Practical implication for Task 2 — done as of PR #3.** Immersions are
+ingested as their own `catalog_programs` rows (`type = 'immersion'`),
+independently of degree-program curriculum parsing, so Immersion placeholder
+slots can reference them generically by name — not parsed out of any single
+degree program's curriculum response.
 
 **Not resolved:** the exact `section=` query values for "admission
 requirements" / "additional information" on the degree endpoint. Tried
@@ -564,7 +632,7 @@ under Programs API above (Task 0.5, resolved).
 
 - **Colleges (12):** GCCIS, KGCOE, COS, CLA, CAD, SCB, CET, CHST, GIS, NTID, INTSD, STUAF — each with full subject map, term-scoped
 - **Campuses (9):** MAIN, DUBAI, CROAT, KOSOV, PRAG, HUNAN, BJTU, DOMRP, TURKY
-- **Components (21):** including **`COP` = Cooperative Education** (how co-op blocks are identified), plus LEC, LAB, LEL, SEM, IND, THE, PRO, INT, STU
+- **Components (21):** including **`COP` = Cooperative Education**, plus LEC, LAB, LEL, SEM, IND, THE, PRO, INT, STU. Note: Task 2 ended up **not** needing this to identify co-op blocks in `catalog_requirement_slots` — the Programs API grid data is sufficient on its own (a title-text match on "co-op", distinguishing it from e.g. "Cooperative Education Seminar", which is a normal 0-credit course, not a full-term placement). `COP` may still be useful for Task 3's own section-level classification, just isn't a Task 2 dependency.
 - **Instruction modes:** P, OL, OA, OS, BL, AB
 
 ---
@@ -623,3 +691,10 @@ Tracked as Task 0 in `docs/handoff/claude-code-brief.md`:
    `catalog_course_term_offerings`'s accumulate-forward design. Not
    exhaustively tested (retention boundary unknown). See the "Terms — one at
    a time" section above and the flag in `schema-decisions.md`.
+9. ~~Do all 77 immersion slugs from the listing page resolve directly to a
+   working curriculum document?~~ **Resolved 2026-08-29 (Task 2) — no.** The
+   `/study/` listing slug and the canonical `/programs/` curriculum-document
+   slug diverge for many immersions; resolved via each immersion's marketing
+   page. Not a `class-search`-style request-shape bug — a real slug-naming
+   mismatch between two URL namespaces on RIT's own site. See "Slug
+   divergence" under Immersions above.
