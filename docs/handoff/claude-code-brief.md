@@ -462,8 +462,8 @@ Also found and fixed live: the `/study/` listing slug and the canonical
 
 ## Task 3 — Ingestion: TigerCenter adapter
 
-**Status as of 2026-08-31: RESOLVED.** Branch `task-3-tigercenter-ingestion`
-(not yet merged/PR'd — pending sign-off on the doc/commit workflow). Built
+**Status as of 2026-08-31: RESOLVED.** [PR #4](https://github.com/caseychin/personal-project-untitled/pull/4)
+(branch `task-3-tigercenter-ingestion`, open against `main`, not yet merged). Built
 `src/ingest/sources/tigercenter/` — a `fetchClassSearch` client that sends
 `Accept: application/json` explicitly on every request (Task 0.6's hard
 lesson), parsers for `currentTerms`/`advancedSearchData`/`class-search`,
