@@ -460,6 +460,80 @@ worth a quick re-test now that the endpoint actually works.
 | `/tigerCenterApi/tc/maintenance` | GET | Maintenance status — check before bulk runs |
 | `/tigerCenterApi/login_shib/*` | GET | SSO-gated. Not needed. |
 
+### `advancedSearchData` — real shape (Task 3, 2026-08-31)
+
+Confirmed by a live fetch during implementation — the prose summary above
+("Colleges (12) ... each with full subject map, term-scoped") undersold
+the real nesting. The response is an object of objects, not arrays:
+
+```json
+{
+  "colleges": {
+    "GIS": {
+      "id": "GIS",
+      "description": "Golisano Inst Sustainability",
+      "subjects": { "2261": { "ARCH": "Architecture", "ISUS": "Institute for Sustainability" } }
+    }
+  },
+  "attributes": {
+    "PERS": {
+      "id": "PERS",
+      "description": "Gen Ed Perspectives Category",
+      "attributeValues": { "ARTISTIC": "GE: Artistic Perspective", "GLOBAL": "GE: Global Perspective", ... }
+    }
+  }
+}
+```
+
+Each college's `subjects` is keyed by **term code**, one level deeper than
+expected — fetch the active term's key, not the whole map.
+
+**A handful of subject codes are genuinely cross-listed under two
+colleges** — confirmed live: `COGS` ("Cognitive Science") appears under
+both `GCCIS` and `CLA`; `ILLM` ("Medical Illustration") under both `CAD`
+and `CHST`. This isn't a data error to work around defensively — it's a
+real institutional fact (a subject jointly offered by two colleges) — but
+it does mean a subject-code-keyed table needs a deterministic tie-break
+(Task 3 dedupes first-wins in college-code sort order) since subject code
+is `catalog_subjects`' primary key and can't hold two rows.
+
+### `class-search`'s attribute arrays are NOT positionally aligned — a real API quirk (Task 3, 2026-08-31)
+
+`class-search` results carry three attribute-related fields:
+`attributes` (an object: `{ groupCode: [description, ...] }`),
+`attributeKeys` (flat array of group codes), and `attributeDescriptions` /
+`attributeValues` (flat arrays). **Confirmed against multiple live courses
+that `attributeDescriptions` and `attributeValues` do not correspond by
+index**, e.g. `ARTH-135`:
+
+```json
+"attributeDescriptions": ["GE: Artistic Perspective", "General Education Elective", "Global Perspective", ...],
+"attributeValues":       ["GENED ELEC", "GLOBAL", "NOTETAKE", "INTERPRET", "ARTISTIC"]
+```
+
+Position 0 of `attributeDescriptions` is `PERS`'s "Artistic Perspective",
+but position 0 of `attributeValues` is `GE`'s code (`GENED ELEC`), not
+`PERS`'s. This held across every multi-attribute course sampled during
+Task 3 — not a one-off. **Only the `attributes` object (grouped by group
+code) is trustworthy; never zip the two flat arrays.**
+
+A second wrinkle: even within `attributes`, a course's free-text
+description doesn't always match the vocabulary's `value_name` verbatim —
+e.g. a course says `"Global Perspective"` where the vocabulary says
+`"GE: Global Perspective"`; `"Interpreter Services Available"` where the
+vocabulary says `"Access Services: Interpreter"`. Task 3's
+`match-attributes.ts` resolves single-value groups by group code alone
+(unambiguous regardless of text) and multi-value groups by case-insensitive
+substring containment after stripping a `"Group: "` prefix — and reports,
+rather than guesses, when a description doesn't resolve to exactly one
+candidate (e.g. `"Caption Services Available"` vs. the vocabulary's
+`"Captioning"` — close, but neither string contains the other). 87 of 350
+observed attribute tags fell into this reported-unmatched bucket on the
+live dev run, mostly `ACCS` "Caption Services Available" and `WRTG`
+"Writing Intensive: Gen Ed" (abbreviated past what substring matching can
+bridge) — logged in `ingest_runs.stats`, not silently dropped, per
+CLAUDE.md's warn-only philosophy.
+
 ### Terms — one at a time
 
 ```json

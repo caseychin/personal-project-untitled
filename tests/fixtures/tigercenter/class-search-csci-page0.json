@@ -1,0 +1,591 @@
+{
+  "found": 139,
+  "searchResults": [
+    {
+      "subject": "CSCI",
+      "enrollmentStatus": "Waitlist",
+      "classType": "E",
+      "component": "LEL",
+      "instructionMode": "P",
+      "campus": "MAIN",
+      "term": "2261",
+      "academicGroupShort": "GCCIS",
+      "academicCareer": "UGRD",
+      "courseTitleLong": "Computer Science I",
+      "catalogNumber": "141",
+      "waitCap": 25,
+      "classNumber": "14404",
+      "sessionCode": "1",
+      "waitTotal": 0,
+      "enrollmentCap": 45,
+      "ppSearchId": "114223-1-2261-1-01",
+      "academicTitle": "Golisano Col Comp&Info Science",
+      "location": "MAIN",
+      "enrollmentTotal": 45,
+      "classSection": "01",
+      "courseDescription": "This course serves as an introduction to computational thinking using a problem-centered approach. Specific topics covered include: expression of algorithms in pseudo code and a programming language; functional and imperative programming techniques; control structures; problem solving using recursion; basic searching and sorting; elementary data structures such as lists, trees, and graphs; and correctness, testing and debugging. Assignments (both in class and for homework) requiring a pseudo code solution and an implementation are an integral part of the course. An end-of-term project is also required.",
+      "academicGroup": "GCCIS",
+      "maximumUnits": 4,
+      "minimumUnits": 4,
+      "gradingBasis": "GRD",
+      "associatedClassNumber": "1",
+      "autoEnrollSect1": " ",
+      "autoEnrollSect2": " ",
+      "courseId": "114223",
+      "printTopic": "N",
+      "courseTopicId": "0",
+      "associatedComponents": [],
+      "attributes": {
+        "PERS": [
+          "Mathematical Perspectives"
+        ],
+        "SMTL": [
+          "Science/Math Literacy"
+        ],
+        "ACCS": [
+          "Interpreter Services Available",
+          "Notetaking Services Available",
+          "Caption Services Available"
+        ],
+        "GE": [
+          "General Education Elective"
+        ]
+      },
+      "attributeKeys": [
+        "ACCS",
+        "GE",
+        "PERS",
+        "SMTL"
+      ],
+      "attributeDescriptions": [
+        "Caption Services Available",
+        "General Education Elective",
+        "Interpreter Services Available",
+        "Mathematical Perspectives",
+        "Notetaking Services Available",
+        "Science/Math Literacy"
+      ],
+      "attributeValues": [
+        "GENED ELEC",
+        "SCIMATH",
+        "MATHEMATIC",
+        "NOTETAKE",
+        "CAPTION",
+        "INTERPRET"
+      ],
+      "preReqDescriptions": [],
+      "preReqDescrsShort": [],
+      "preReqDescrsLong": [
+        "No Prerequisites"
+      ],
+      "notes": "This course is department consent only and restricted to incoming freshmen until August 1st.",
+      "associatedClasses": [],
+      "courseOfferNumber": "1",
+      "instructorFullName": "Anthony Audi",
+      "instructorEmail": "teavse@rit.edu",
+      "meetings": [
+        {
+          "days": "Wed Fri",
+          "daysFull": "Wednesday Friday",
+          "location": "Golisano Hall (GOL)-3640",
+          "instructor": "Anthony Audi",
+          "locationShort": "GOL 3640",
+          "time": "12:00 PM - 01:50 PM",
+          "instructorEmail": "teavse@rit.edu",
+          "date": "08/24/2026 - 12/07/2026",
+          "daytimes": "Wed Fri 12:00 PM - 01:50 PM"
+        },
+        {
+          "days": "Mon Wed Fri",
+          "daysFull": "Monday Wednesday Friday",
+          "location": "Golisano Hall (GOL)-3435",
+          "instructor": "Anthony Audi",
+          "locationShort": "GOL 3435",
+          "time": "12:00 PM - 01:50 PM",
+          "instructorEmail": "teavse@rit.edu",
+          "date": "08/24/2026 - 12/07/2026",
+          "daytimes": "Mon Wed Fri 12:00 PM - 01:50 PM"
+        }
+      ],
+      "statusImage": "./assets/svgLib/waitlist.svg",
+      "reservedCap": [
+        {
+          "description": "This class is restricted to students in COMPSCI-BS & 2M & MN & BS/MS, APPMTH-BS & 2M & BS/MS, CMTH-BS & 2M & BS/MS, CMPE-BS & 2M & MN & BS/MS.",
+          "major": "COMPSCI,APPMTH,CMTH,CMPE",
+          "reservedInfoVOs": [
+            {
+              "enrollmentCapacity": "45",
+              "reservationTotal": "44",
+              "startDate": "2026-03-01T00:00:00.000+00:00"
+            },
+            {
+              "enrollmentCapacity": "0",
+              "reservationTotal": "44",
+              "startDate": "2026-08-21T00:00:00.000+00:00"
+            }
+          ],
+          "sequenceId": 1,
+          "endDate": "08/21/2026",
+          "toolTip": "45 seats are available until 08/21/2026 then 0 seats are available"
+        }
+      ],
+      "consent": "N"
+    },
+    {
+      "subject": "CSCI",
+      "enrollmentStatus": "Open",
+      "classType": "E",
+      "component": "LEL",
+      "instructionMode": "P",
+      "campus": "MAIN",
+      "term": "2261",
+      "academicGroupShort": "GCCIS",
+      "academicCareer": "UGRD",
+      "courseTitleLong": "Computer Science I",
+      "catalogNumber": "141",
+      "waitCap": 25,
+      "classNumber": "14405",
+      "sessionCode": "1",
+      "waitTotal": 0,
+      "enrollmentCap": 45,
+      "ppSearchId": "114223-1-2261-1-02",
+      "academicTitle": "Golisano Col Comp&Info Science",
+      "location": "MAIN",
+      "enrollmentTotal": 44,
+      "classSection": "02",
+      "courseDescription": "This course serves as an introduction to computational thinking using a problem-centered approach. Specific topics covered include: expression of algorithms in pseudo code and a programming language; functional and imperative programming techniques; control structures; problem solving using recursion; basic searching and sorting; elementary data structures such as lists, trees, and graphs; and correctness, testing and debugging. Assignments (both in class and for homework) requiring a pseudo code solution and an implementation are an integral part of the course. An end-of-term project is also required.",
+      "academicGroup": "GCCIS",
+      "maximumUnits": 4,
+      "minimumUnits": 4,
+      "gradingBasis": "GRD",
+      "associatedClassNumber": "2",
+      "autoEnrollSect1": " ",
+      "autoEnrollSect2": " ",
+      "courseId": "114223",
+      "printTopic": "N",
+      "courseTopicId": "0",
+      "associatedComponents": [],
+      "attributes": {
+        "PERS": [
+          "Mathematical Perspectives"
+        ],
+        "SMTL": [
+          "Science/Math Literacy"
+        ],
+        "GE": [
+          "General Education Elective"
+        ]
+      },
+      "attributeKeys": [
+        "GE",
+        "PERS",
+        "SMTL"
+      ],
+      "attributeDescriptions": [
+        "General Education Elective",
+        "Mathematical Perspectives",
+        "Science/Math Literacy"
+      ],
+      "attributeValues": [
+        "GENED ELEC",
+        "SCIMATH",
+        "MATHEMATIC"
+      ],
+      "preReqDescriptions": [],
+      "preReqDescrsShort": [],
+      "preReqDescrsLong": [
+        "No Prerequisites"
+      ],
+      "notes": "This course is department consent only and restricted to incoming freshmen until August 1st.",
+      "associatedClasses": [],
+      "courseOfferNumber": "1",
+      "instructorFullName": "Anthony Audi",
+      "instructorEmail": "teavse@rit.edu",
+      "meetings": [
+        {
+          "days": "Wed Fri",
+          "daysFull": "Wednesday Friday",
+          "location": "Golisano Hall (GOL)-3640",
+          "instructor": "Anthony Audi",
+          "locationShort": "GOL 3640",
+          "time": "08:00 AM - 09:50 AM",
+          "instructorEmail": "teavse@rit.edu",
+          "date": "08/24/2026 - 12/07/2026",
+          "daytimes": "Wed Fri 08:00 AM - 09:50 AM"
+        },
+        {
+          "days": "Mon Wed Fri",
+          "daysFull": "Monday Wednesday Friday",
+          "location": "Golisano Hall (GOL)-3435",
+          "instructor": "Anthony Audi",
+          "locationShort": "GOL 3435",
+          "time": "08:00 AM - 09:50 AM",
+          "instructorEmail": "teavse@rit.edu",
+          "date": "08/24/2026 - 12/07/2026",
+          "daytimes": "Mon Wed Fri 08:00 AM - 09:50 AM"
+        }
+      ],
+      "statusImage": "./assets/svgLib/open_dot.svg",
+      "reservedCap": [
+        {
+          "description": "This class is restricted to students in COMPSCI-BS & 2M & MN & BS/MS, APPMTH-BS & 2M & BS/MS, CMTH-BS & 2M & BS/MS, CMPE-BS & 2M & MN & BS/MS.",
+          "major": "COMPSCI,APPMTH,CMTH,CMPE",
+          "reservedInfoVOs": [
+            {
+              "enrollmentCapacity": "45",
+              "reservationTotal": "41",
+              "startDate": "2026-03-01T00:00:00.000+00:00"
+            },
+            {
+              "enrollmentCapacity": "0",
+              "reservationTotal": "41",
+              "startDate": "2026-08-21T00:00:00.000+00:00"
+            }
+          ],
+          "sequenceId": 1,
+          "endDate": "08/21/2026",
+          "toolTip": "45 seats are available until 08/21/2026 then 0 seats are available"
+        }
+      ],
+      "consent": "N"
+    },
+    {
+      "subject": "CSCI",
+      "enrollmentStatus": "Open",
+      "classType": "E",
+      "component": "LEL",
+      "instructionMode": "P",
+      "campus": "MAIN",
+      "term": "2261",
+      "academicGroupShort": "GCCIS",
+      "academicCareer": "UGRD",
+      "courseTitleLong": "Computer Science I",
+      "catalogNumber": "141",
+      "waitCap": 25,
+      "classNumber": "14407",
+      "sessionCode": "1",
+      "waitTotal": 0,
+      "enrollmentCap": 45,
+      "ppSearchId": "114223-1-2261-1-03",
+      "academicTitle": "Golisano Col Comp&Info Science",
+      "location": "MAIN",
+      "enrollmentTotal": 41,
+      "classSection": "03",
+      "courseDescription": "This course serves as an introduction to computational thinking using a problem-centered approach. Specific topics covered include: expression of algorithms in pseudo code and a programming language; functional and imperative programming techniques; control structures; problem solving using recursion; basic searching and sorting; elementary data structures such as lists, trees, and graphs; and correctness, testing and debugging. Assignments (both in class and for homework) requiring a pseudo code solution and an implementation are an integral part of the course. An end-of-term project is also required.",
+      "academicGroup": "GCCIS",
+      "maximumUnits": 4,
+      "minimumUnits": 4,
+      "gradingBasis": "GRD",
+      "associatedClassNumber": "3",
+      "autoEnrollSect1": " ",
+      "autoEnrollSect2": " ",
+      "courseId": "114223",
+      "printTopic": "N",
+      "courseTopicId": "0",
+      "associatedComponents": [],
+      "attributes": {
+        "PERS": [
+          "Mathematical Perspectives"
+        ],
+        "SMTL": [
+          "Science/Math Literacy"
+        ],
+        "GE": [
+          "General Education Elective"
+        ]
+      },
+      "attributeKeys": [
+        "GE",
+        "PERS",
+        "SMTL"
+      ],
+      "attributeDescriptions": [
+        "General Education Elective",
+        "Mathematical Perspectives",
+        "Science/Math Literacy"
+      ],
+      "attributeValues": [
+        "GENED ELEC",
+        "SCIMATH",
+        "MATHEMATIC"
+      ],
+      "preReqDescriptions": [],
+      "preReqDescrsShort": [],
+      "preReqDescrsLong": [
+        "No Prerequisites"
+      ],
+      "notes": "This course is department consent only and restricted to incoming freshmen until August 1st.",
+      "associatedClasses": [],
+      "courseOfferNumber": "1",
+      "instructorFullName": "Zachary Butler",
+      "instructorEmail": "zxbvcs@rit.edu",
+      "meetings": [
+        {
+          "days": "Tue Thu",
+          "daysFull": "Tuesday Thursday",
+          "location": "Golisano Hall (GOL)-3520",
+          "instructor": "Zachary Butler",
+          "locationShort": "GOL 3520",
+          "time": "02:00 PM - 03:50 PM",
+          "instructorEmail": "zxbvcs@rit.edu",
+          "date": "08/24/2026 - 12/07/2026",
+          "daytimes": "Tue Thu 02:00 PM - 03:50 PM"
+        },
+        {
+          "days": "Mon Tue Thu",
+          "daysFull": "Monday Tuesday Thursday",
+          "location": "Golisano Hall (GOL)-1445",
+          "instructor": "Zachary Butler",
+          "locationShort": "GOL 1445",
+          "time": "02:00 PM - 03:50 PM",
+          "instructorEmail": "zxbvcs@rit.edu",
+          "date": "08/24/2026 - 12/07/2026",
+          "daytimes": "Mon Tue Thu 02:00 PM - 03:50 PM"
+        }
+      ],
+      "statusImage": "./assets/svgLib/open_dot.svg",
+      "reservedCap": [
+        {
+          "description": "This class is restricted to students in COMPSCI-BS & 2M & MN & BS/MS, APPMTH-BS & 2M & BS/MS, CMTH-BS & 2M & BS/MS, CMPE-BS & 2M & MN & BS/MS.",
+          "major": "COMPSCI,APPMTH,CMTH,CMPE",
+          "reservedInfoVOs": [
+            {
+              "enrollmentCapacity": "45",
+              "reservationTotal": "39",
+              "startDate": "2026-03-01T00:00:00.000+00:00"
+            },
+            {
+              "enrollmentCapacity": "0",
+              "reservationTotal": "39",
+              "startDate": "2026-08-21T00:00:00.000+00:00"
+            }
+          ],
+          "sequenceId": 1,
+          "endDate": "08/21/2026",
+          "toolTip": "45 seats are available until 08/21/2026 then 0 seats are available"
+        }
+      ],
+      "consent": "N"
+    },
+    {
+      "subject": "CSCI",
+      "enrollmentStatus": "Open",
+      "classType": "E",
+      "component": "LEL",
+      "instructionMode": "P",
+      "campus": "MAIN",
+      "term": "2261",
+      "academicGroupShort": "GCCIS",
+      "academicCareer": "UGRD",
+      "courseTitleLong": "Computer Science II",
+      "catalogNumber": "142",
+      "waitCap": 25,
+      "classNumber": "14408",
+      "sessionCode": "1",
+      "waitTotal": 0,
+      "enrollmentCap": 35,
+      "ppSearchId": "114224-1-2261-1-01",
+      "academicTitle": "Golisano Col Comp&Info Science",
+      "location": "MAIN",
+      "enrollmentTotal": 32,
+      "classSection": "01",
+      "courseDescription": "This course delves further into problem solving by continuing the discussion of data structure use and design, but now from an object-oriented perspective. Key topics include more information on tree and graph structures, nested data structures, objects, classes, inheritance, interfaces, object-oriented collection class libraries for abstract data types (e.g. stacks, queues, maps, and trees), and static vs. dynamic data types. Concepts of object-oriented design are a large part of the course. Software qualities related to object orientation, namely cohesion, minimal coupling, modifiability, and extensibility, are all introduced in this course, as well as a few elementary object-oriented design patterns. Input and output streams, graphical user interfaces, and exception handling are covered. Students will also be introduced to a modern integrated software development environment (IDE). Programming projects will be required.",
+      "academicGroup": "GCCIS",
+      "maximumUnits": 4,
+      "minimumUnits": 4,
+      "gradingBasis": "GRD",
+      "associatedClassNumber": "1",
+      "autoEnrollSect1": " ",
+      "autoEnrollSect2": " ",
+      "courseId": "114224",
+      "printTopic": "N",
+      "courseTopicId": "0",
+      "associatedComponents": [],
+      "attributes": {
+        "PERS": [
+          "Mathematical Perspectives"
+        ],
+        "SMTL": [
+          "Science/Math Literacy"
+        ],
+        "GE": [
+          "General Education Elective"
+        ]
+      },
+      "attributeKeys": [
+        "GE",
+        "PERS",
+        "SMTL"
+      ],
+      "attributeDescriptions": [
+        "General Education Elective",
+        "Mathematical Perspectives",
+        "Science/Math Literacy"
+      ],
+      "attributeValues": [
+        "GENED ELEC",
+        "SCIMATH",
+        "MATHEMATIC"
+      ],
+      "preReqDescriptions": [],
+      "preReqDescrsShort": [],
+      "preReqDescrsLong": [
+        "Prerequisites: CSCI-141 with a grade of C- or better or equivalent course. "
+      ],
+      "associatedClasses": [],
+      "courseOfferNumber": "1",
+      "instructorFullName": "Sean Strout",
+      "instructorEmail": "ssvcs@rit.edu",
+      "meetings": [
+        {
+          "days": "Tue Thu",
+          "daysFull": "Tuesday Thursday",
+          "location": "Golisano Hall (GOL)-3520",
+          "instructor": "Sean Strout",
+          "locationShort": "GOL 3520",
+          "time": "10:00 AM - 11:50 AM",
+          "instructorEmail": "ssvcs@rit.edu",
+          "date": "08/24/2026 - 12/07/2026",
+          "daytimes": "Tue Thu 10:00 AM - 11:50 AM"
+        },
+        {
+          "days": "Mon Tue Thu",
+          "daysFull": "Monday Tuesday Thursday",
+          "location": "Golisano Hall (GOL)-1435",
+          "instructor": "Sean Strout",
+          "locationShort": "GOL 1435",
+          "time": "10:00 AM - 11:50 AM",
+          "instructorEmail": "ssvcs@rit.edu",
+          "date": "08/24/2026 - 12/07/2026",
+          "daytimes": "Mon Tue Thu 10:00 AM - 11:50 AM"
+        }
+      ],
+      "statusImage": "./assets/svgLib/open_dot.svg",
+      "reservedCap": [
+        {
+          "description": "This class is restricted to students in COMPSCI-BS & 2M & MN & BS/MS, APPMTH-BS & 2M & BS/MS, CMTH-BS & 2M & BS/MS, CMPE-BS & 2M & MN & BS/MS.",
+          "major": "COMPSCI,APPMTH,CMTH,CMPE",
+          "reservedInfoVOs": [
+            {
+              "enrollmentCapacity": "35",
+              "reservationTotal": "25",
+              "startDate": "2026-03-01T00:00:00.000+00:00"
+            },
+            {
+              "enrollmentCapacity": "0",
+              "reservationTotal": "25",
+              "startDate": "2026-08-21T00:00:00.000+00:00"
+            }
+          ],
+          "sequenceId": 1,
+          "endDate": "08/21/2026",
+          "toolTip": "35 seats are available until 08/21/2026 then 0 seats are available"
+        }
+      ],
+      "consent": "N"
+    },
+    {
+      "subject": "CSCI",
+      "enrollmentStatus": "Open",
+      "classType": "E",
+      "component": "LEL",
+      "instructionMode": "P",
+      "campus": "MAIN",
+      "term": "2261",
+      "academicGroupShort": "GCCIS",
+      "academicCareer": "UGRD",
+      "courseTitleLong": "Computer Science for AP Students",
+      "catalogNumber": "140",
+      "waitCap": 24,
+      "classNumber": "14403",
+      "sessionCode": "1",
+      "waitTotal": 0,
+      "enrollmentCap": 40,
+      "ppSearchId": "113244-1-2261-1-01",
+      "academicTitle": "Golisano Col Comp&Info Science",
+      "location": "MAIN",
+      "enrollmentTotal": 37,
+      "classSection": "01",
+      "courseDescription": "This accelerated course covers material from the first-year sequence of courses and provides the foundation for all subsequent Computer Science courses. The course stresses problem solving while covering modern software development techniques and introducing essential software tools. Topics include tree and graph structures, nested data structures, objects, classes, inheritance, interfaces, object-oriented collection class libraries for abstract data types (e.g. stacks, queues, maps, and trees), and static vs. dynamic data types. Concepts of object-oriented design are a large part of the course. Software qualities related to object orientation, namely cohesion, minimal coupling, modifiability, and extensibility, are all introduced in this course, as well as a few elementary object-oriented design patterns. Input and output streams, graphical user interfaces, and exception handling are covered. Note: Requires department permission for registration.",
+      "academicGroup": "GCCIS",
+      "maximumUnits": 4,
+      "minimumUnits": 4,
+      "gradingBasis": "GRD",
+      "associatedClassNumber": "1",
+      "autoEnrollSect1": " ",
+      "autoEnrollSect2": " ",
+      "courseId": "113244",
+      "printTopic": "N",
+      "courseTopicId": "0",
+      "associatedComponents": [],
+      "attributes": {
+        "PERS": [
+          "Mathematical Perspectives"
+        ],
+        "SMTL": [
+          "Science/Math Literacy"
+        ],
+        "ACCS": [
+          "Caption Services Available"
+        ],
+        "GE": [
+          "General Education Elective"
+        ]
+      },
+      "attributeKeys": [
+        "ACCS",
+        "GE",
+        "PERS",
+        "SMTL"
+      ],
+      "attributeDescriptions": [
+        "Caption Services Available",
+        "General Education Elective",
+        "Mathematical Perspectives",
+        "Science/Math Literacy"
+      ],
+      "attributeValues": [
+        "GENED ELEC",
+        "SCIMATH",
+        "MATHEMATIC",
+        "CAPTION"
+      ],
+      "preReqDescriptions": [],
+      "preReqDescrsShort": [],
+      "preReqDescrsLong": [
+        "No Prerequisites"
+      ],
+      "associatedClasses": [],
+      "courseOfferNumber": "1",
+      "instructorFullName": "Maria Jose Cepeda Garcia",
+      "instructorEmail": "mjcvcs@rit.edu",
+      "meetings": [
+        {
+          "days": "Wed Fri",
+          "daysFull": "Wednesday Friday",
+          "location": "Golisano Hall (GOL)-3520",
+          "instructor": "Maria Jose Cepeda Garcia",
+          "locationShort": "GOL 3520",
+          "time": "10:00 AM - 11:50 AM",
+          "instructorEmail": "mjcvcs@rit.edu",
+          "date": "08/24/2026 - 12/07/2026",
+          "daytimes": "Wed Fri 10:00 AM - 11:50 AM"
+        },
+        {
+          "days": "Mon Wed Fri",
+          "daysFull": "Monday Wednesday Friday",
+          "location": "Golisano Hall (GOL)-1445",
+          "instructor": "Maria Jose Cepeda Garcia",
+          "locationShort": "GOL 1445",
+          "time": "10:00 AM - 11:50 AM",
+          "instructorEmail": "mjcvcs@rit.edu",
+          "date": "08/24/2026 - 12/07/2026",
+          "daytimes": "Mon Wed Fri 10:00 AM - 11:50 AM"
+        }
+      ],
+      "statusImage": "./assets/svgLib/open_dot.svg",
+      "reservedCap": [],
+      "consent": "D"
+    }
+  ]
+}

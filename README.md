@@ -19,10 +19,14 @@ Then:
 npm run test:rls
 ```
 
-Schema changes are numbered migrations in `supabase/migrations/`, applied to
-both `rit-flowchart-dev` and `rit-flowchart-prod` via the Supabase MCP
-`apply_migration` tool — `db/schema.sql` stays the consolidated,
-human-readable definition and is never hand-edited to reflect a DB change.
+Schema changes are numbered migrations in `supabase/migrations/`, applied via
+the Supabase MCP `apply_migration` tool — `db/schema.sql` stays the
+consolidated, human-readable definition and is never hand-edited to reflect a
+DB change. The initial schema (`0001`) was applied to both `rit-flowchart-dev`
+and `rit-flowchart-prod` immediately; later migrations may land on dev first
+and prod once verified, so the two can briefly diverge — check
+`supabase/migrations/` against each project's applied migration list (Supabase
+MCP `list_migrations`) rather than assuming they match.
 
 ## Documentation
 

@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test:rls": "vitest run tests/rls-cross-user.test.ts",
-    "ingest:programs": "tsx scripts/ingest-programs.ts"
+    "ingest:programs": "tsx scripts/ingest-programs.ts",
+    "ingest:tigercenter": "tsx scripts/ingest-tigercenter.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.5",

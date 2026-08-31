@@ -462,6 +462,56 @@ Also found and fixed live: the `/study/` listing slug and the canonical
 
 ## Task 3 — Ingestion: TigerCenter adapter
 
+**Status as of 2026-08-31: RESOLVED.** [PR #4](https://github.com/caseychin/personal-project-untitled/pull/4)
+(branch `task-3-tigercenter-ingestion`, open against `main`, not yet merged). Built
+`src/ingest/sources/tigercenter/` — a `fetchClassSearch` client that sends
+`Accept: application/json` explicitly on every request (Task 0.6's hard
+lesson), parsers for `currentTerms`/`advancedSearchData`/`class-search`,
+a `match-attributes.ts` module handling a real API quirk discovered during
+implementation (see `data-sources.md`), and writers that enrich Task 2's
+`catalog_courses` stubs in place. Orchestrated by
+`scripts/ingest-tigercenter.ts` (`npm run ingest:tigercenter`), reusing
+`src/ingest/http.ts` (extended with a `post` method sharing the same rate
+limiter), `documents.ts`, `runs.ts`, and `service-client.ts` unchanged.
+
+**Schema decision resolved before writing any rows** (per this brief's
+explicit ask, not deferred): `catalog_course_attributes.term_code` is now
+nullable with a `source` column and two partial-unique indexes, rather than
+staying `NOT NULL` — see `schema-decisions.md`'s resolved flag and
+migration `0002_catalog_course_attributes_nullable_term.sql`. Confirmed via
+repo-wide search before deciding that the table had zero writers as of the
+Task 2 merge, so this shaped an unused table, not a live migration.
+Applied to `rit-flowchart-dev` only — prod migration is a deliberate
+follow-up.
+
+**Acceptance test passes:** every course referenced by CS BS's
+`catalog_requirement_slots` resolves with credits, title, and description
+(`csBsGaps: []` in the live run's stats). Live dev run: 12 subjects (scoped
+dynamically to whatever Task 2 already stubbed — `COMM, CSCI, EEEE, EGEN,
+GCIS, MATH, MECE, PHYS, STAT, SWEN, UWRT, YOPS` — not RIT's full ~150-subject
+catalog), 413 courses enriched (352 new, 61 updated), 350 Gen Ed attribute
+tags written, 87 legitimately unmatched and reported rather than guessed.
+4 courses across the full catalog remain unenriched (`CSCI-488`,
+`SWEN-488`, `SWEN-562`, `EGEN-498`) — all outside CS BS's own requirement
+slots (co-op placeholders or courses genuinely not offered this term) —
+reported in run stats, not silently dropped, per the brief's "report any
+that don't."
+
+Two real findings surfaced during implementation, both documented in
+`data-sources.md` rather than guessed past:
+- `advancedSearchData`'s actual JSON shape (objects keyed by code, subjects
+  nested one level deeper under the active term, a small number of
+  subjects genuinely cross-listed under two colleges) — the prior prose
+  summary undersold this and would have produced a broken migration-time
+  upsert (`ON CONFLICT DO UPDATE command cannot affect row a second time`)
+  if trusted as written.
+- `class-search`'s `attributeKeys`/`attributeDescriptions`/`attributeValues`
+  flat arrays are **not positionally aligned** — confirmed against multiple
+  live courses. Only the `attributes` object (grouped by group code) is
+  trustworthy; matching a course's free-text description to a specific
+  vocabulary value code needed its own heuristic (`match-attributes.ts`),
+  designed to report rather than guess on ambiguity.
+
 - Bootstrap session; respect `/maintenance`
 - `GET /currentTerms` → `catalog_terms`
 - `GET /advancedSearchData` → `catalog_colleges`, `catalog_subjects`, `catalog_attributes`

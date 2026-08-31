@@ -45,7 +45,7 @@ because they are the most expensive to reverse.
 | Phase | Owner | Status |
 |---|---|---|
 | 0 — Data & schema planning | Human + Claude (chat) | **Complete** |
-| 1 — Data ingestion | Claude Code | Ready to start |
+| 1 — Data ingestion | Claude Code | **In progress** — Programs API + TigerCenter adapters done (Tasks 0–3); prereq parsing + availability seeding remain (Tasks 4–5) |
 | 2 — UI/UX design | Claude Design | Ready to start (parallel with 1) |
 | 3 — Backend / API | Claude Code | Blocked on 1 |
 | 4 — Frontend | Claude Code | Blocked on 2 + 3 |
@@ -127,3 +127,4 @@ rather than directly tested.
 | 2026-08-11 | Multi-program supported in shape, not in rules | Join table costs nothing now, avoids painful migration later |
 | 2026-08-22 | Gen Ed attribute source: Programs API `detail-ge_attrs`, not TigerCenter `class-search` | `class-search` returns `found: 0` for every query against the current term regardless of shape (Task 0.6); Programs API field confirmed populated for UGRD courses cookie-less and needs no working TigerCenter session |
 | 2026-08-26 | Superseding note, not a reversal: the 2026-08-22 rationale above no longer holds as stated | Task 0.6 resolved — the `found: 0` behavior was a missing `Accept: application/json` header, not a broken/empty `class-search`; it now returns real, cross-validated attribute data too. The Programs API choice can stand on its own merits (catalog-year-scoped, no TigerCenter dependency) but should not be justified by "`class-search` doesn't work" anymore. Left as an open design choice, not re-decided here — see `schema-decisions.md` |
+| 2026-08-31 | `catalog_course_attributes.term_code` made nullable, with a `source` column and two partial-unique indexes, instead of splitting into two tables | Task 3 needed a real writer for this table (TigerCenter, term-scoped) while leaving room for a future catalog-year-scoped writer (Programs API's `detail-ge_attrs`, still unbuilt). Table confirmed to have zero writers before deciding, so this shaped an unused table rather than migrating live data — see `schema-decisions.md` |

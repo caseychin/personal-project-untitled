@@ -1,0 +1,15 @@
+{
+  "responseHeader":{
+    "zkConnected":true,
+    "status":0,
+    "QTime":0,
+    "params":{
+      "q":"*:*",
+      "rows":"200",
+      "wt":"json"}},
+  "response":{"numFound":1,"start":0,"numFoundExact":true,"docs":[
+      {
+        "strm":"2261",
+        "descr":"2026-27 Fall (2261)",
+        "_version_":1875009930605363200}]
+  }}
