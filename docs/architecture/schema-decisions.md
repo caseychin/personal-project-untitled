@@ -146,7 +146,7 @@ depend on rules RIT publishes per program and are validation-engine concerns.
 
 ---
 
-## Flag — Task 0.3's workaround affects `catalog_course_attributes.term_code`
+## Flag — Task 0.3's workaround affects `catalog_course_attributes.term_code` — RESOLVED (Task 3, 2026-08-31)
 
 `catalog_course_attributes` was designed assuming Gen Ed tagging comes from
 TigerCenter's `class-search` — hence `term_code not null references
@@ -166,15 +166,29 @@ source (`class-search`, has a natural `term_code`) and a catalog-year-scoped
 one (Programs API, doesn't). The nullable-`term_code`-or-split-tables
 question below still needs an answer either way.
 
-**Not resolved here — flagging per CLAUDE.md rather than picking silently.**
-Task 2 (Programs API adapter) will need one of:
-- a nullable `term_code` for Programs-API-sourced rows, distinguished by
-  `source`, or
-- separating catalog-year-scoped attributes from term-observed ones into
-  different tables/columns.
+**Resolved with the project owner, 2026-08-31, during Task 3.** Before
+deciding, confirmed via a repo-wide search that `catalog_attributes` /
+`catalog_course_attributes` had **zero writers anywhere** as of the Task 2
+merge — Task 2 never actually populated them (it only reduced Gen Ed text
+to a coarse `category_hint` string on `catalog_requirement_slots`). So this
+decision shaped an unused table for its first real writer, not a live
+migration of real data.
 
-Whichever is chosen belongs in a numbered migration, not a hand-edit of
-`db/schema.sql`.
+**Decision: one table, nullable `term_code`, not a split into two tables.**
+`catalog_course_attributes` gained an `id` surrogate key, a `source`
+column, and dropped the `NOT NULL` on `term_code`. A `scope_check`
+constraint enforces that `source = 'tigercenter'` rows always carry a real
+`term_code` and `source = 'programs_api'` rows never do; two partial-unique
+indexes (`..._term_scoped_uniq`, `..._year_scoped_uniq`) replace the old
+three-column primary key. See `supabase/migrations/
+0002_catalog_course_attributes_nullable_term.sql`, applied to
+`rit-flowchart-dev` only (prod migration is a follow-up, not silently
+done).
+
+Task 3 itself only ever writes `source = 'tigercenter'` rows. No writer for
+`source = 'programs_api'` exists yet — building the Programs API's
+`detail-ge_attrs` → `catalog_attributes` mapping remains unstarted work for
+whoever picks it up next; this migration just stops blocking it.
 
 ---
 
