@@ -552,7 +552,8 @@ Known patterns:
 ~30 real prereq strings with expected trees. **Do not inflate `parsed`** — the
 warn-only guarantee depends on that flag being trustworthy.
 
-**Status as of 2026-08-31: RESOLVED.** Branch `task-4-prereq-parser`. Built
+**Status as of 2026-08-31: RESOLVED.** [PR #5](https://github.com/caseychin/personal-project-untitled/pull/5)
+(branch `task-4-prereq-parser`, merged). Built
 `src/prereqs/` (`tokenize.ts`, `known-phrases.ts`, `parse-prereq-text.ts`,
 `resolve-courses.ts`, `write-prereq-tree.ts`) — a pure-text recursive-descent
 parser, deliberately **not** under `src/ingest/sources/`: this is an in-repo
