@@ -552,6 +552,77 @@ Known patterns:
 ~30 real prereq strings with expected trees. **Do not inflate `parsed`** — the
 warn-only guarantee depends on that flag being trustworthy.
 
+**Status as of 2026-08-31: RESOLVED.** Branch `task-4-prereq-parser`. Built
+`src/prereqs/` (`tokenize.ts`, `known-phrases.ts`, `parse-prereq-text.ts`,
+`resolve-courses.ts`, `write-prereq-tree.ts`) — a pure-text recursive-descent
+parser, deliberately **not** under `src/ingest/sources/`: this is an in-repo
+DB→DB transform, not an external-API adapter, and it doesn't fit
+`startRun`/`finishRun`/`persistDocument` (those are typed to the
+`ingest_source` enum, which has no value for a parsing job). Reuses
+`src/ingest/service-client.ts` unchanged. Orchestrated by
+`scripts/parse-prereqs.ts` (`npm run parse:prereqs`).
+
+**`parsed`-vs-`none` semantics, resolved with the project owner before writing
+code** (this brief's ≥80% bar is ambiguous against the schema's own `'none'`
+enum value — see `schema-decisions.md` Decision 5):
+- `'parsed'` means the whole string was correctly and completely classified —
+  as course logic where present, as an explicit retained `unparsed` fragment
+  everywhere else — with nothing silently dropped. It does **not** require at
+  least one resolved course leaf: a restriction/permission/standing-only
+  string (19 real courses, e.g. "Enrollment ... requires permission from the
+  department...") is fully and correctly captured as a single `unparsed` root
+  node, so it's honestly `'parsed'`. This is safe because the (future,
+  v2) warn-only validator only ever acts on `node_type = 'course'` leaves —
+  an all-`unparsed` tree can never produce a false warning.
+- `'none'` is reserved narrowly for literal "No Prerequisites" (19 courses) —
+  a true zero-barriers signal, distinct from "there's a barrier but it isn't
+  course-based."
+- A course-shaped code that doesn't resolve against `catalog_courses`
+  (confirmed real and common: `NMTH-260`, `CSEC-124`, `IDAI-202` and others
+  reference subjects Task 3 never ingested — it only pulled 12 of RIT's
+  ~170 subjects) still counts as `'parsed'` — becomes an `unparsed` leaf with
+  the original code as `raw_fragment` (never fabricated as a `course` node,
+  which the `prereq_shape` CHECK constraint wouldn't allow anyway). Whether a
+  code resolves is a catalog-inventory fact, not a parsing outcome.
+
+**Live run against `rit-flowchart-dev` (2026-08-31), all 121 CSCI/MATH
+courses:** `{ none: 19, parsed: 100, partial: 0, failed: 1 }` — **100/121
+(82.6%) reach `parsed`**, clearing the 80% bar against the full denominator
+(no need to exclude `'none'` to hit it, though that reading would give
+100/102 = 98%). The single `'failed'` is `MATH-90`, whose entire
+`prereq_text` is the anomalous `"RIT Dubai "` — not a prerequisite statement,
+a restriction, or a course reference of any kind; correctly left `'failed'`
+rather than inflated. Re-ran twice to confirm idempotency (delete + reinsert
+per course) — identical counts both times, 679 total tree rows across 101
+courses with a tree (100 `parsed` + 1 `failed`; `'none'` courses get zero
+rows).
+
+Test fixture: `tests/prereqs/fixtures/prereqs.ts`, 28 real strings (not
+invented — pulled directly from `rit-flowchart-dev`) plus 2 edge-case unit
+tests, covering every pattern class in this section's brief and several more
+found only by pulling real data first (numeric non-RIT codes, course-shaped
+codes from un-ingested subjects, `&`-for-`and` and missing-paren-spacing
+typos, grade-threshold-prefix-vs-suffix scoping, co-requisite-on-its-own-line,
+credit-restriction trailer sentences, and one real unbalanced-parens data
+error on `CSCI-344`).
+
+**Two real findings, worth knowing before touching this parser again:**
+- **The brief's `"(CSCI-243, MATH-190)"` comma-as-AND example does not occur
+  anywhere in the real 121-string pull.** Every real comma in this dataset is
+  a plain-language OR-list separator (e.g. `MATH-131`'s `"MATH-101, MATH-111,
+  NMTH-260, NMTH-272 or NMTH-275"`). Comma is therefore treated as OR
+  uniformly, with no special-cased paren-comma-as-AND branch — adding one
+  would have been unverifiable speculative code for a shape that provably
+  doesn't appear in this scope.
+- **Grade-threshold phrasing has more real shapes than the brief's single
+  example**, all handled: prefix form scoping the whole following OR-chain
+  ("C- or better in A or B or C", sometimes missing the word "in" —
+  `MATH-211`/`219`/`221`), prefix form scoping just the next single
+  alternative when it recurs mid-clause (`MATH-171` has two independent "C-
+  or better in X" qualifiers at the same OR level), suffix form scoping a
+  parenthesized group ("(...) with grades of B or better"), and a
+  no-"or better" variant ("with a minimum grade of B-," — `MATH-181`/`181R`).
+
 ---
 
 ## Task 5 — Availability seeding
