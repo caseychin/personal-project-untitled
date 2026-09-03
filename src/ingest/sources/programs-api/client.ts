@@ -42,3 +42,16 @@ export async function fetchImmersionListing(fetcher: RateLimitedFetcher): Promis
   const { status, body } = await fetcher.get(`${BASE}/${endpoint}`);
   return { endpoint, requestParams: {}, status, body };
 }
+
+// Course-level detail — found by reading /programs-api/courseleaf/functions.js
+// (the showCourse() handler behind every clickable course-code bubble), not
+// by guessing paths. Returns XML with the course's HTML block inside a
+// CDATA section; an unknown code returns 200 with an empty <courseinfo/>
+// rather than an error (confirmed live for `code=ZZZZ-999` during Task 5).
+export async function fetchCourseDetail(fetcher: RateLimitedFetcher, code: string): Promise<RawFetch> {
+  const endpoint = "programs-api/courseleaf/proxy-bubble.php";
+  const requestParams = { code };
+  const qs = new URLSearchParams(requestParams).toString();
+  const { status, body } = await fetcher.get(`${BASE}/${endpoint}?${qs}`);
+  return { endpoint, requestParams, status, body };
+}
