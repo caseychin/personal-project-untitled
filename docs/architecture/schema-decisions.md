@@ -192,7 +192,7 @@ whoever picks it up next; this migration just stops blocking it.
 
 ---
 
-## Flag — the "TigerCenter is one-term-only" premise behind `catalog_course_term_offerings` is overturned, design choice needed
+## Flag — the "TigerCenter is one-term-only" premise behind `catalog_course_term_offerings` is overturned, design choice needed — RESOLVED (Task 5, 2026-09-02)
 
 `catalog_course_term_offerings` accumulates observations per term rather than
 backfilling, on the premise that TigerCenter structurally cannot supply
@@ -224,6 +224,37 @@ best choice — options worth weighing when Task 3 is actually built:
 Whichever is chosen — or if neither, and the current design is kept as-is
 on purpose — belongs in a numbered migration or an explicit decision-log
 entry, not a silent no-op.
+
+**Resolved with the project owner, 2026-09-02, during Task 5: kept
+accumulate-forward-only, no backfill, no schema change.** Before deciding,
+re-confirmed the live state: `catalog_course_term_offerings` still has
+exactly one term (`2261`, fall) and `catalog_terms` has exactly one row —
+there's no historical-term metadata sitting around to backfill against
+either.
+
+Two reasons this stayed a "no" for now rather than exercising the option the
+flag opened up:
+
+1. The only confirmed historical codes (`2251` Fall 2025, `2231` Fall 2023,
+   from Task 3's investigation) are **Fall-only**. Backfilling them would
+   strengthen `observed` confidence for Fall-offered courses specifically,
+   but does nothing for the Spring/Summer cold-start gap, which matters just
+   as much for a planner that has to judge every season.
+2. Backfilling needs new `catalog_terms` rows for those historical codes
+   with inferred `season`/`academic_year` metadata — no existing writer
+   handles a non-`currentTerms` term, and guessing that metadata is exactly
+   the kind of unverified inference this project avoids. It would also pull
+   ingestion-adapter scope into what Task 5 needed to be about (seeding
+   logic), for a payoff (extra Fall confidence) that's second-order compared
+   to the confidence formula already doing its job.
+
+The `observed` confidence formula (`src/availability/confidence.ts`) already
+keeps a single term safely under Task 5's 0.5 acceptance bar (0.3), and
+grows on its own as real terms accumulate forward — a Spring 2027 ingestion
+run, etc. — which is what "grows per term" in the original table comment was
+describing in the first place. If a future task needs Fall confidence to
+mature faster than real semesters allow, backfilling is still there as an
+option; it just wasn't worth taking now.
 
 ---
 
