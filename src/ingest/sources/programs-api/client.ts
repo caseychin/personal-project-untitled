@@ -42,3 +42,24 @@ export async function fetchImmersionListing(fetcher: RateLimitedFetcher): Promis
   const { status, body } = await fetcher.get(`${BASE}/${endpoint}`);
   return { endpoint, requestParams: {}, status, body };
 }
+
+// Course-level detail — found by reading /programs-api/courseleaf/functions.js
+// (the showCourse() handler behind every clickable course-code bubble), not
+// by guessing paths. Returns XML with the course's HTML block inside a
+// CDATA section; an unknown code returns 200 with an empty <courseinfo/>
+// rather than an error (confirmed live for `code=ZZZZ-999` during Task 5).
+//
+// `code` is folded into `endpoint` itself (not left only in requestParams),
+// matching fetchMarketingPage's convention below — ingest_documents' unique
+// index is on (source, endpoint, content_hash), and several real not-found
+// codes (e.g. CSCI-900/901) return a byte-identical empty <courseinfo/>
+// body. With a constant endpoint string, only the first such code would
+// ever get persisted; every later one would look like an already-seen
+// document and silently never get its own ingest_documents row.
+export async function fetchCourseDetail(fetcher: RateLimitedFetcher, code: string): Promise<RawFetch> {
+  const requestParams = { code };
+  const qs = new URLSearchParams(requestParams).toString();
+  const endpoint = `programs-api/courseleaf/proxy-bubble.php?${qs}`;
+  const { status, body } = await fetcher.get(`${BASE}/${endpoint}`);
+  return { endpoint, requestParams, status, body };
+}
