@@ -39,8 +39,11 @@ create type block_status  as enum ('planned', 'in_progress', 'completed', 'trans
 create type prereq_node_type as enum ('group', 'course', 'unparsed');
 create type prereq_parse_status as enum ('unparsed', 'parsed', 'partial', 'failed', 'none');
 
--- Where a claim about "this course is offered in season X" came from.
--- Ordered roughly by trustworthiness; see catalog_course_availability.
+-- Where a claim about "this course is offered in season X" came from. This
+-- list's declaration order is NOT the priority order — see
+-- catalog_course_availability's table comment below ("SEEDING, in priority
+-- order") for the actual seeding waterfall (catalog_text > plan_of_study >
+-- observed > manual).
 create type availability_source as enum (
   'catalog_text',    -- explicit "typically offered" note in the course catalog
   'observed',        -- we saw sections in that season, accumulated over terms
