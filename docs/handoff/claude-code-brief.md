@@ -640,6 +640,68 @@ Populate `catalog_course_availability` from the sources in priority order
 of a single observed term. Verify explicitly — this is the failure mode that
 would make the feature fire false warnings on every Spring block.
 
+**Status as of 2026-09-04: RESOLVED.** [PR #6](https://github.com/caseychin/personal-project-untitled/pull/6)
+(branch `task-5-availability-seeding`, merged, commit `b493e1f`). Built
+`src/availability/` — a priority-waterfall seeder (`catalog_text` (0.9) ->
+`plan_of_study` (0.2) -> `observed` (0.3, +0.2/confirming term, capped 0.7)
+-> `manual`, never written programmatically) implemented as a shared
+`upsertAvailabilityClaim` helper: a source may only overwrite `manual`
+(never), a strictly-lower-priority source, or its own prior row (the
+self-refresh case `observed` needs to grow across future terms).
+Orchestrated by `scripts/seed-availability.ts` (`npm run seed:availability`).
+
+Two design forks confirmed with the project owner in Plan Mode before
+writing code:
+1. `catalog_text` had zero raw data — `proxy-bubble.php` had never been
+   called by Task 2 or 3. Decided **in scope for this PR**: added
+   `fetchCourseDetail` + `parse-course-detail.ts`, reusing Task 2/3's
+   fetcher/`persistDocument`/`startRun`/`finishRun` unchanged.
+2. Backfilling `catalog_course_term_offerings`' historical terms (the flag
+   left open in `schema-decisions.md` since Task 3) — decided **no
+   backfill, stays accumulate-forward-only**. See that doc's dated
+   resolution entry for the reasoning.
+
+**Live run against `rit-flowchart-dev`:** 765 `catalog_text` rows (403
+courses, confidence 0.9), 37 `observed` rows (confidence 0.3 — only one
+term, `2261`, exists), 0 `plan_of_study` rows remaining (fully absorbed by
+`catalog_text` once a real "Fall or Spring"-vs-"Fall, Spring" separator gap
+was found and fixed), 0 `manual`. All 417 courses have at least one row.
+Acceptance criterion verified directly via SQL against dev: **0 rows** have
+`observed` confidence > 0.5 on a single term.
+
+**A senior-dev/QA pass ran before merge** (full functional + unit testing
+across the whole project, not just the diff) and found three real issues,
+all fixed pre-merge (commit `d4d8063`):
+1. No regression test existed for the actual priority-rank waterfall logic
+   itself (only for the `manual`-always-wins special case) — added
+   `tests/availability/priority-waterfall.test.ts`.
+2. `fetchCourseDetail`'s `endpoint` string was constant regardless of course
+   code, colliding with `ingest_documents`' unique `(source, endpoint,
+   content_hash)` index whenever two codes returned byte-identical bodies
+   (confirmed live: 5 of 6 real not-found courses were silently never
+   persisted) — fixed by folding `code` into `endpoint`.
+3. `availability_source`'s enum declaration comment claimed a
+   trustworthiness order that contradicted the actual seeding priority a
+   few lines below — corrected (comment only, no behavior change).
+
+**One open design tension, left as-is (a previously-confirmed decision, not
+a bug):** the waterfall ranks `plan_of_study` (flat 0.2) *above* `observed`
+(grows to 0.7) in overwrite priority, exactly as `schema-decisions.md`
+Decision 6 and the schema comment specify. Once a `plan_of_study` claim
+lands for a course/season pair, only `catalog_text` or `manual` can replace
+it — real accumulated observed evidence cannot. Zero live impact today (dev
+ended with 0 `plan_of_study` rows), but worth revisiting if a course ever
+has both a template placement and strong multi-term observed data without
+`catalog_text` coverage.
+
+---
+
+## Phase 1 complete
+
+All of Tasks 0-5 are merged as of 2026-09-04. Phase 1 (data ingestion) is
+done. Phase 3 (backend/API) has its own brief:
+[`docs/handoff/phase-3-backend-brief.md`](phase-3-backend-brief.md).
+
 ---
 
 ## Not in Phase 1
