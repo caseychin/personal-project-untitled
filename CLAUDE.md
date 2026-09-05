@@ -154,6 +154,18 @@ undocumented and may change without notice.
 
 ## Open questions
 
-Tracked in `docs/handoff/claude-code-brief.md`. Several data-source questions
-were unresolvable without a real HTTP client and are the **first** tasks to
-close out. Do not build ingestion on assumptions before verifying them.
+Phase 1 (data ingestion, Tasks 0-5) is complete — all of its verification
+questions are resolved; see `docs/handoff/claude-code-brief.md`. What's
+actually still open, tracked in `docs/architecture/schema-decisions.md`:
+
+- Immersions are ingested as lightweight entities only; their internal
+  required/elective course-list structure isn't parsed (needs a schema
+  decision — nullable `year_number` vs. a separate table — before it can
+  be). This blocks *resolving* an immersion placeholder to a specific
+  course, not instantiating a flowchart in the first place.
+- No confirmed example of RIT's inline degree-option-cluster shape
+  (`catalog_requirement_groups`) has been found yet; the write path exists
+  but is untested against real data.
+
+Phase 3 (backend/API) is next — brief at
+`docs/handoff/phase-3-backend-brief.md`.

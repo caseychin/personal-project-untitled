@@ -45,9 +45,9 @@ because they are the most expensive to reverse.
 | Phase | Owner | Status |
 |---|---|---|
 | 0 — Data & schema planning | Human + Claude (chat) | **Complete** |
-| 1 — Data ingestion | Claude Code | **In progress** — Programs API + TigerCenter adapters done (Tasks 0–3); prereq parsing + availability seeding remain (Tasks 4–5) |
-| 2 — UI/UX design | Claude Design | Ready to start (parallel with 1) |
-| 3 — Backend / API | Claude Code | Blocked on 1 |
+| 1 — Data ingestion | Claude Code | **Complete** — Tasks 0–5 all merged (Programs API + TigerCenter adapters, prereq parsing, availability seeding) |
+| 2 — UI/UX design | Claude Design | Ready to start — not yet begun |
+| 3 — Backend / API | Claude Code | **Ready to start** — brief at `docs/handoff/phase-3-backend-brief.md` |
 | 4 — Frontend | Claude Code | Blocked on 2 + 3 |
 
 Phases 1 and 2 run in parallel: design depends on the *schema*, not on ingested data.
@@ -110,6 +110,40 @@ rather than directly tested.
 
 ---
 
+## Phase 1 retrospective — what actually happened
+
+Phase 1 (Tasks 0–5) is complete. Notes on how it went, for whoever plans
+Phase 3 next:
+
+**Phase 0's schema decisions held up under real data.** None of the eight
+numbered decisions in `schema-decisions.md` needed reversing once real
+ingestion started — the two-layer availability model, keeping prereq text
+alongside its parse, semantic block position, all survived contact with
+actual RIT data. The two flags that *are* still open (immersion internal
+structure; unconfirmed degree-option-cluster shape) were both deliberately
+deferred at design time, not decisions that turned out wrong.
+
+**Each task surfaced at least one real API fact that outdated the brief's
+own assumptions**, and in every case the response was to update the docs and
+adjust, not to guess past it: Task 3 found `class-search`'s `found: 0`
+was a missing `Accept` header, not a broken endpoint — and that finding
+also overturned the "TigerCenter can only ever show one term" premise
+`catalog_course_term_offerings`'s design was built on. Task 5 found RIT
+uses both `"Fall, Spring"` and `"Fall or Spring"` as list separators in the
+same field, caught only because the parser was built to report unfamiliar
+text rather than guess at it.
+
+**A senior-dev/QA pass on Task 5, done deliberately rather than merging on
+author self-review alone, was worth it.** It found a real data-completeness
+bug (a dedup collision silently dropping `ingest_documents` rows for
+several real courses) that passing tests and clean `tsc`/`eslint` output
+had not caught, plus a genuine test-coverage gap on the newest, most novel
+piece of logic in the PR (the priority-rank waterfall). Worth repeating for
+Phase 3's tasks, especially the ones with real state-transition logic
+(block reordering, placeholder resolution) rather than pure data pipelines.
+
+---
+
 ## Decision log
 
 | Date | Decision | Rationale |
@@ -128,3 +162,5 @@ rather than directly tested.
 | 2026-08-22 | Gen Ed attribute source: Programs API `detail-ge_attrs`, not TigerCenter `class-search` | `class-search` returns `found: 0` for every query against the current term regardless of shape (Task 0.6); Programs API field confirmed populated for UGRD courses cookie-less and needs no working TigerCenter session |
 | 2026-08-26 | Superseding note, not a reversal: the 2026-08-22 rationale above no longer holds as stated | Task 0.6 resolved — the `found: 0` behavior was a missing `Accept: application/json` header, not a broken/empty `class-search`; it now returns real, cross-validated attribute data too. The Programs API choice can stand on its own merits (catalog-year-scoped, no TigerCenter dependency) but should not be justified by "`class-search` doesn't work" anymore. Left as an open design choice, not re-decided here — see `schema-decisions.md` |
 | 2026-08-31 | `catalog_course_attributes.term_code` made nullable, with a `source` column and two partial-unique indexes, instead of splitting into two tables | Task 3 needed a real writer for this table (TigerCenter, term-scoped) while leaving room for a future catalog-year-scoped writer (Programs API's `detail-ge_attrs`, still unbuilt). Table confirmed to have zero writers before deciding, so this shaped an unused table rather than migrating live data — see `schema-decisions.md` |
+| 2026-09-02 | `catalog_course_term_offerings` stays accumulate-forward-only; no historical-term backfill | The only confirmed historical term codes are Fall-only, so backfilling would strengthen Fall confidence but leave the Spring/Summer cold-start gap untouched, and would need new `catalog_terms` rows with inferred metadata no existing writer handles — see `schema-decisions.md`'s resolved flag |
+| 2026-09-04 | Task 5 went through a senior-dev/QA pass before merge, not just author self-review | Caught a real data-completeness bug (`ingest_documents` dedup collision in the new `fetchCourseDetail` — 5 of 6 real not-found courses were silently never persisted) and a test-coverage gap on the priority-waterfall logic that unit tests alone hadn't surfaced — see the handoff brief's Task 5 status and the QA findings memory |
